@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.projet</groupId>
-    <artifactId>Odontodiza2.0</artifactId>
+    <artifactId>Odontodiza</artifactId>
     <version>1.0.0</version>
     <packaging>war</packaging>
 
@@ -57,4 +57,5 @@
             <version>5.2.3</version>
         </dependency>
     </dependencies>
+    <name>Odontodiza</name>
 </project>
