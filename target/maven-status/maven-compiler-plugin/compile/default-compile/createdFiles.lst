@@ -28,6 +28,7 @@ com\proyecto\odontodiza\model\Persona.class
 com\proyecto\odontodiza\model\Paciente.class
 com\proyecto\odontodiza\model\Cita.class
 com\proyecto\odontodiza\dao\HorarioDAO.class
+com\proyecto\odontodiza\controller\ExportarPacientesServlet.class
 com\proyecto\odontodiza\controller\PacienteServlet.class
 com\proyecto\odontodiza\model\Notificacion.class
 com\proyecto\odontodiza\dao\PersonaDAO.class
