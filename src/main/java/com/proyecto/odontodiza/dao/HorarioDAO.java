@@ -11,13 +11,14 @@ import java.util.List;
 public class HorarioDAO {
 
     public void insert(HorarioDisponible horario) {
-        String sql = "INSERT INTO horarios_disponibles (odontologo_id, fecha_hora_inicio, duracion_minutos, estado) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO horarios_disponibles (odontologo_id, fecha_hora_inicio, duracion_minutos, tipo_atencion, estado) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, horario.getOdontologoId());
             pstmt.setTimestamp(2, Timestamp.valueOf(horario.getFechaHoraInicio()));
             pstmt.setInt(3, horario.getDuracionMinutos());
-            pstmt.setString(4, "Disponible");
+            pstmt.setString(4, horario.getTipoAtencion());
+            pstmt.setString(5, "Disponible");
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error al insertar horario", e);
@@ -38,6 +39,7 @@ public class HorarioDAO {
                     horario.setFechaHoraInicio(rs.getTimestamp("fecha_hora_inicio").toLocalDateTime());
                     horario.setDuracionMinutos(rs.getInt("duracion_minutos"));
                     horario.setEstado(rs.getString("estado"));
+                    horario.setTipoAtencion(rs.getString("tipo_atencion"));
                     horarios.add(horario);
                 }
             }
@@ -71,6 +73,7 @@ public class HorarioDAO {
                 horario.setFechaHoraInicio(rs.getTimestamp("fecha_hora_inicio").toLocalDateTime());
                 horario.setDuracionMinutos(rs.getInt("duracion_minutos"));
                 horario.setEstado(rs.getString("estado"));
+                horario.setTipoAtencion(rs.getString("tipo_atencion"));
                 horarios.add(horario);
             }
         } catch (SQLException e) {

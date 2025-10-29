@@ -141,15 +141,66 @@ public class CitaDAO {
         return citas;
     }
 
-    public void updateStatus(int citaId, String estado) {
-        String sql = "UPDATE citas SET estado = ? WHERE id = ?";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, estado);
-            pstmt.setInt(2, citaId);
-            pstmt.executeUpdate();
+    public void updateStatus(int citaId, String nuevoEstado) {
+        String sqlSelectHorarioId = "SELECT horario_id FROM citas WHERE id = ?";
+        String sqlUpdateCita = "UPDATE citas SET estado = ? WHERE id = ?";
+        String sqlUpdateHorario = "UPDATE horarios_disponibles SET estado = ? WHERE id = ?";
+
+        Connection conn = null;
+        try {
+            conn = DBUtil.getConnection();
+            conn.setAutoCommit(false); // Iniciar transacción
+
+            // 1. Obtener el horario_id de la cita
+            int horarioId = -1;
+            try (PreparedStatement pstmtSelect = conn.prepareStatement(sqlSelectHorarioId)) {
+                pstmtSelect.setInt(1, citaId);
+                try (ResultSet rs = pstmtSelect.executeQuery()) {
+                    if (rs.next()) {
+                        horarioId = rs.getInt("horario_id");
+                    }
+                }
+            }
+
+            if (horarioId == -1) {
+                throw new SQLException("No se encontró la cita con id: " + citaId);
+            }
+
+            // 2. Actualizar el estado de la cita
+            try (PreparedStatement pstmtUpdateCita = conn.prepareStatement(sqlUpdateCita)) {
+                pstmtUpdateCita.setString(1, nuevoEstado);
+                pstmtUpdateCita.setInt(2, citaId);
+                pstmtUpdateCita.executeUpdate();
+            }
+
+            // 3. Si la cita se cancela, liberar el horario
+            if ("Cancelada".equalsIgnoreCase(nuevoEstado)) {
+                try (PreparedStatement pstmtUpdateHorario = conn.prepareStatement(sqlUpdateHorario)) {
+                    pstmtUpdateHorario.setString(1, "Disponible");
+                    pstmtUpdateHorario.setInt(2, horarioId);
+                    pstmtUpdateHorario.executeUpdate();
+                }
+            }
+
+            conn.commit(); // Confirmar transacción
+
         } catch (SQLException e) {
-            throw new RuntimeException("Error al actualizar estado de la cita", e);
+            if (conn != null) {
+                try {
+                    conn.rollback(); // Revertir en caso de error
+                } catch (SQLException ex) {
+                    throw new RuntimeException("Error al revertir la transacción", ex);
+                }
+            }
+            throw new RuntimeException("Error al actualizar el estado de la cita", e);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    // Log o manejar el error al cerrar la conexión
+                }
+            }
         }
     }
 

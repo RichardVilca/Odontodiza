@@ -160,6 +160,17 @@
                                 <option value="60" selected>60 minutos</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="tipoAtencion" class="form-label">Tipo de Atención</label>
+                            <select id="tipoAtencion" name="tipoAtencion" class="form-select" required>
+                                <option value="Consulta General">Consulta General</option>
+                                <option value="Limpieza Dental">Limpieza Dental</option>
+                                <option value="Ortodoncia (Seguimiento)">Ortodoncia (Seguimiento)</option>
+                                <option value="Blanqueamiento Dental">Blanqueamiento Dental</option>
+                                <option value="Endodoncia">Endodoncia</option>
+                                <option value="Cirugía Menor">Cirugía Menor</option>
+                            </select>
+                        </div>
                         <button type="submit" class="btn btn-primary">Añadir Horario</button>
                     </form>
                 </div>
@@ -172,7 +183,7 @@
                                 <c:forEach var="h" items="${horarios}">
                                     <li class="horario-item">
                                         <span>
-                                            <fmt:formatDate value="${h.fechaHoraInicioAsDate}" pattern="EEE, d MMM yyyy, HH:mm"/> - ${h.duracionMinutos} min (${h.estado})
+                                            <fmt:formatDate value="${h.fechaHoraInicioAsDate}" pattern="EEE, d MMM yyyy, HH:mm"/> - ${h.duracionMinutos} min - ${h.tipoAtencion} (${h.estado})
                                         </span>
                                         <c:if test="${h.estado == 'Disponible'}">
                                             <form action="<c:url value='/gestionarHorarios'/>" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este horario?');">

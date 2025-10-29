@@ -90,6 +90,7 @@
                         <div class="horario-item">
                             <div class="horario-info">
                                 <strong><fmt:formatDate value="${h.fechaHoraInicioAsDate}" pattern="EEEE, d 'de' MMMM, yyyy"/></strong><br>
+                                <span>Tipo de Atención: ${h.tipoAtencion}</span><br>
                                 <span>Odontólogo: ${h.odontologo.usuario.persona.nombre} ${h.odontologo.usuario.persona.apellido}</span><br>
                                 <span><fmt:formatDate value="${h.fechaHoraInicioAsDate}" pattern="HH:mm"/> - ${h.duracionMinutos} min</span>
                             </div>

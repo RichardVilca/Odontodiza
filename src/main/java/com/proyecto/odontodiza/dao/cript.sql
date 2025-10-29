@@ -64,6 +64,7 @@ CREATE TABLE horarios_disponibles (
     odontologo_id INT NOT NULL, -- Changed to odontologo_id
     fecha_hora_inicio DATETIME NOT NULL,
     duracion_minutos INT NOT NULL, -- 30, 45, 60
+    tipo_atencion VARCHAR(255) NOT NULL, -- e.g., 'Consulta General', 'Limpieza Dental'
     estado VARCHAR(50) DEFAULT 'Disponible', -- Disponible, Reservado
     FOREIGN KEY (odontologo_id) REFERENCES odontologos(id)
 );
@@ -147,12 +148,12 @@ INSERT INTO pacientes (usuario_id, historial_dental_id) VALUES (1, 1), (2, 2), (
 INSERT INTO odontologos (especialidad, licencia, usuario_id) VALUES ('Odontología General', 'LIC-12345', 4);
 
 -- Horarios Disponibles creados por el Odontólogo (ID=1)
-INSERT INTO horarios_disponibles (odontologo_id, fecha_hora_inicio, duracion_minutos, estado) VALUES
-(1, '2025-10-20 09:00:00', 60, 'Reservado'), -- Este será para la cita 1
-(1, '2025-10-20 10:00:00', 60, 'Reservado'), -- Este será para la cita 2
-(1, '2025-10-21 11:00:00', 30, 'Disponible'),
-(1, '2025-10-21 11:30:00', 30, 'Disponible'),
-(1, '2025-10-22 16:00:00', 60, 'Reservado'); -- Este será para la cita 3
+INSERT INTO horarios_disponibles (odontologo_id, fecha_hora_inicio, duracion_minutos, tipo_atencion, estado) VALUES
+(1, '2025-10-20 09:00:00', 60, 'Limpieza Dental', 'Reservado'), -- Este será para la cita 1
+(1, '2025-10-20 10:00:00', 60, 'Consulta General', 'Reservado'), -- Este será para la cita 2
+(1, '2025-10-21 11:00:00', 30, 'Consulta General', 'Disponible'),
+(1, '2025-10-21 11:30:00', 30, 'Consulta General', 'Disponible'),
+(1, '2025-10-22 16:00:00', 60, 'Blanqueamiento Dental', 'Reservado'); -- Este será para la cita 3
 
 -- Citas (vinculadas a los horarios reservados)
 INSERT INTO citas (paciente_id, horario_id, motivo, estado) VALUES

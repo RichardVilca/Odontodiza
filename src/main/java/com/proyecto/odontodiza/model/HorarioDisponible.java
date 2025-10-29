@@ -12,6 +12,7 @@ public class HorarioDisponible {
     private LocalDateTime fechaHoraInicio;
     private int duracionMinutos;
     private String estado;
+    private String tipoAtencion;
 
     // Nuevo método para compatibilidad con JSTL
     public Date getFechaHoraInicioAsDate() {
@@ -69,5 +70,13 @@ public class HorarioDisponible {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getTipoAtencion() {
+        return tipoAtencion;
+    }
+
+    public void setTipoAtencion(String tipoAtencion) {
+        this.tipoAtencion = tipoAtencion;
     }
 }

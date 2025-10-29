@@ -62,11 +62,13 @@ public class GestionarHorariosServlet extends HttpServlet {
             Odontologo odontologo = odontologoDAO.findByUsuarioId(usuario.getId());
             String fechaHoraStr = request.getParameter("fechaHora");
             int duracion = Integer.parseInt(request.getParameter("duracion"));
+            String tipoAtencion = request.getParameter("tipoAtencion");
 
             HorarioDisponible nuevoHorario = new HorarioDisponible();
             nuevoHorario.setOdontologoId(odontologo.getId());
             nuevoHorario.setFechaHoraInicio(LocalDateTime.parse(fechaHoraStr));
             nuevoHorario.setDuracionMinutos(duracion);
+            nuevoHorario.setTipoAtencion(tipoAtencion);
 
             horarioDAO.insert(nuevoHorario);
 
