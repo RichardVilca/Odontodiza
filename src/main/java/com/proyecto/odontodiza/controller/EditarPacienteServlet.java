@@ -41,11 +41,15 @@ public class EditarPacienteServlet extends HttpServlet {
         try {
             int pacienteId = Integer.parseInt(pacienteIdParam);
             Paciente paciente = pacienteDAO.findById(pacienteId);
+
             if (paciente == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Paciente no encontrado.");
                 return;
             }
+
+            request.setAttribute("paciente", paciente);
             request.getRequestDispatcher("/WEB-INF/views/odontologo/editar-paciente.jsp").forward(request, response);
+
         } catch (Exception e) {
             throw new ServletException("Error al cargar los datos del paciente para edición.", e);
         }

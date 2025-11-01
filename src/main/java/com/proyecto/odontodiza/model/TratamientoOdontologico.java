@@ -1,5 +1,6 @@
 package com.proyecto.odontodiza.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class TratamientoOdontologico {
@@ -11,24 +12,14 @@ public class TratamientoOdontologico {
     private String descripcion;
     private Date fechaInicio;
     private Date fechaFin;
-    private String estado;
-    private double costo;
+    private String estado; // Ej: Pendiente, En Progreso, Completado
+    private BigDecimal costo;
     private String observaciones;
+    private String dientesAfectados; // Ej: "11,12,46"
+
+    // Constructores, Getters y Setters
 
     public TratamientoOdontologico() {
-    }
-
-    public TratamientoOdontologico(int id, Paciente paciente, Odontologo odontologo, String nombreTratamiento, String descripcion, Date fechaInicio, Date fechaFin, String estado, double costo, String observaciones) {
-        this.id = id;
-        this.paciente = paciente;
-        this.odontologo = odontologo;
-        this.nombreTratamiento = nombreTratamiento;
-        this.descripcion = descripcion;
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
-        this.estado = estado;
-        this.costo = costo;
-        this.observaciones = observaciones;
     }
 
     public int getId() {
@@ -95,11 +86,11 @@ public class TratamientoOdontologico {
         this.estado = estado;
     }
 
-    public double getCosto() {
+    public BigDecimal getCosto() {
         return costo;
     }
 
-    public void setCosto(double costo) {
+    public void setCosto(BigDecimal costo) {
         this.costo = costo;
     }
 
@@ -109,5 +100,13 @@ public class TratamientoOdontologico {
 
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
+    }
+
+    public String getDientesAfectados() {
+        return dientesAfectados;
+    }
+
+    public void setDientesAfectados(String dientesAfectados) {
+        this.dientesAfectados = dientesAfectados;
     }
 }

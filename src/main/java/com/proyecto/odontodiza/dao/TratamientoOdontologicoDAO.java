@@ -11,129 +11,120 @@ import java.util.List;
 
 public class TratamientoOdontologicoDAO {
 
-    public List<TratamientoOdontologico> listAll() {
+    public List<TratamientoOdontologico> findByPacienteId(int pacienteId) {
         List<TratamientoOdontologico> tratamientos = new ArrayList<>();
-        String sql = "SELECT to.id, to.nombre_tratamiento, to.descripcion, to.fecha_inicio, to.fecha_fin, to.estado, to.costo, to.observaciones, " +
-                     "p.id as paciente_id, o.id as odontologo_id " +
-                     "FROM tratamientos_odontologicos to " +
-                     "JOIN pacientes p ON to.paciente_id = p.id " +
-                     "JOIN odontologos o ON to.odontologo_id = o.id";
-        try (Connection conn = DBUtil.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        String sql = "SELECT * FROM tratamientos_odontologicos WHERE paciente_id = ? ORDER BY fecha_inicio DESC";
 
-            while (rs.next()) {
-                TratamientoOdontologico tratamiento = new TratamientoOdontologico();
-                tratamiento.setId(rs.getInt("id"));
-                tratamiento.setNombreTratamiento(rs.getString("nombre_tratamiento"));
-                tratamiento.setDescripcion(rs.getString("descripcion"));
-                tratamiento.setFechaInicio(rs.getDate("fecha_inicio"));
-                tratamiento.setFechaFin(rs.getDate("fecha_fin"));
-                tratamiento.setEstado(rs.getString("estado"));
-                tratamiento.setCosto(rs.getDouble("costo"));
-                tratamiento.setObservaciones(rs.getString("observaciones"));
-
-                // For simplicity, only setting IDs for related objects.
-                // Full objects would be fetched in a more complete application.
-                Paciente paciente = new Paciente();
-                paciente.setId(rs.getInt("paciente_id"));
-                tratamiento.setPaciente(paciente);
-
-                Odontologo odontologo = new Odontologo();
-                odontologo.setId(rs.getInt("odontologo_id"));
-                tratamiento.setOdontologo(odontologo);
-
-                tratamientos.add(tratamiento);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return tratamientos;
-    }
-
-    public TratamientoOdontologico findById(int id) {
-        TratamientoOdontologico tratamiento = null;
-        String sql = "SELECT to.id, to.nombre_tratamiento, to.descripcion, to.fecha_inicio, to.fecha_fin, to.estado, to.costo, to.observaciones, " +
-                     "p.id as paciente_id, o.id as odontologo_id " +
-                     "FROM tratamientos_odontologicos to " +
-                     "JOIN pacientes p ON to.paciente_id = p.id " +
-                     "JOIN odontologos o ON to.odontologo_id = o.id " +
-                     "WHERE to.id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setInt(1, id);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    tratamiento = new TratamientoOdontologico();
-                    tratamiento.setId(rs.getInt("id"));
-                    tratamiento.setNombreTratamiento(rs.getString("nombre_tratamiento"));
-                    tratamiento.setDescripcion(rs.getString("descripcion"));
-                    tratamiento.setFechaInicio(rs.getDate("fecha_inicio"));
-                    tratamiento.setFechaFin(rs.getDate("fecha_fin"));
-                    tratamiento.setEstado(rs.getString("estado"));
-                    tratamiento.setCosto(rs.getDouble("costo"));
-                    tratamiento.setObservaciones(rs.getString("observaciones"));
+            pstmt.setInt(1, pacienteId);
+            ResultSet rs = pstmt.executeQuery();
 
-                    Paciente paciente = new Paciente();
-                    paciente.setId(rs.getInt("paciente_id"));
-                    tratamiento.setPaciente(paciente);
+            while (rs.next()) {
+                TratamientoOdontologico t = new TratamientoOdontologico();
+                t.setId(rs.getInt("id"));
+                // Aquí necesitaríamos DAOs de Paciente y Odontologo para cargarlos completos
+                // Por simplicidad, solo seteamos el ID por ahora.
+                Paciente p = new Paciente();
+                p.setId(rs.getInt("paciente_id"));
+                t.setPaciente(p);
+                
+                Odontologo o = new Odontologo();
+                o.setId(rs.getInt("odontologo_id"));
+                t.setOdontologo(o);
 
-                    Odontologo odontologo = new Odontologo();
-                    odontologo.setId(rs.getInt("odontologo_id"));
-                    tratamiento.setOdontologo(odontologo);
-                }
+                t.setNombreTratamiento(rs.getString("nombre_tratamiento"));
+                t.setDescripcion(rs.getString("descripcion"));
+                t.setFechaInicio(rs.getDate("fecha_inicio"));
+                t.setFechaFin(rs.getDate("fecha_fin"));
+                t.setEstado(rs.getString("estado"));
+                t.setCosto(rs.getBigDecimal("costo"));
+                t.setObservaciones(rs.getString("observaciones"));
+                t.setDientesAfectados(rs.getString("dientes_afectados"));
+                tratamientos.add(t);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-        return tratamiento;
+        return tratamientos;
+    }
+    
+    public TratamientoOdontologico findById(int id) {
+        String sql = "SELECT * FROM tratamientos_odontologicos WHERE id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                TratamientoOdontologico t = new TratamientoOdontologico();
+                t.setId(rs.getInt("id"));
+                Paciente p = new Paciente();
+                p.setId(rs.getInt("paciente_id"));
+                t.setPaciente(p);
+                Odontologo o = new Odontologo();
+                o.setId(rs.getInt("odontologo_id"));
+                t.setOdontologo(o);
+                t.setNombreTratamiento(rs.getString("nombre_tratamiento"));
+                t.setDescripcion(rs.getString("descripcion"));
+                t.setFechaInicio(rs.getDate("fecha_inicio"));
+                t.setFechaFin(rs.getDate("fecha_fin"));
+                t.setEstado(rs.getString("estado"));
+                t.setCosto(rs.getBigDecimal("costo"));
+                t.setObservaciones(rs.getString("observaciones"));
+                t.setDientesAfectados(rs.getString("dientes_afectados"));
+                return t;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public void insert(TratamientoOdontologico tratamiento) {
-        String sql = "INSERT INTO tratamientos_odontologicos (paciente_id, odontologo_id, nombre_tratamiento, descripcion, fecha_inicio, fecha_fin, estado, costo, observaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public void insert(TratamientoOdontologico t) {
+        String sql = "INSERT INTO tratamientos_odontologicos (paciente_id, odontologo_id, nombre_tratamiento, descripcion, fecha_inicio, fecha_fin, estado, costo, observaciones, dientes_afectados) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            pstmt.setInt(1, tratamiento.getPaciente().getId());
-            pstmt.setInt(2, tratamiento.getOdontologo().getId());
-            pstmt.setString(3, tratamiento.getNombreTratamiento());
-            pstmt.setString(4, tratamiento.getDescripcion());
-            pstmt.setDate(5, new java.sql.Date(tratamiento.getFechaInicio().getTime()));
-            pstmt.setDate(6, tratamiento.getFechaFin() != null ? new java.sql.Date(tratamiento.getFechaFin().getTime()) : null);
-            pstmt.setString(7, tratamiento.getEstado());
-            pstmt.setDouble(8, tratamiento.getCosto());
-            pstmt.setString(9, tratamiento.getObservaciones());
+            pstmt.setInt(1, t.getPaciente().getId());
+            pstmt.setInt(2, t.getOdontologo().getId());
+            pstmt.setString(3, t.getNombreTratamiento());
+            pstmt.setString(4, t.getDescripcion());
+            pstmt.setDate(5, new java.sql.Date(t.getFechaInicio().getTime()));
+            pstmt.setDate(6, (t.getFechaFin() != null) ? new java.sql.Date(t.getFechaFin().getTime()) : null);
+            pstmt.setString(7, t.getEstado());
+            pstmt.setBigDecimal(8, t.getCosto());
+            pstmt.setString(9, t.getObservaciones());
+            pstmt.setString(10, t.getDientesAfectados());
             pstmt.executeUpdate();
 
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    tratamiento.setId(generatedKeys.getInt(1));
+                    t.setId(generatedKeys.getInt(1));
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
-    public void update(TratamientoOdontologico tratamiento) {
-        String sql = "UPDATE tratamientos_odontologicos SET paciente_id = ?, odontologo_id = ?, nombre_tratamiento = ?, descripcion = ?, fecha_inicio = ?, fecha_fin = ?, estado = ?, costo = ?, observaciones = ? WHERE id = ?";
+    public void update(TratamientoOdontologico t) {
+        String sql = "UPDATE tratamientos_odontologicos SET paciente_id = ?, odontologo_id = ?, nombre_tratamiento = ?, descripcion = ?, fecha_inicio = ?, fecha_fin = ?, estado = ?, costo = ?, observaciones = ?, dientes_afectados = ? WHERE id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, tratamiento.getPaciente().getId());
-            pstmt.setInt(2, tratamiento.getOdontologo().getId());
-            pstmt.setString(3, tratamiento.getNombreTratamiento());
-            pstmt.setString(4, tratamiento.getDescripcion());
-            pstmt.setDate(5, new java.sql.Date(tratamiento.getFechaInicio().getTime()));
-            pstmt.setDate(6, tratamiento.getFechaFin() != null ? new java.sql.Date(tratamiento.getFechaFin().getTime()) : null);
-            pstmt.setString(7, tratamiento.getEstado());
-            pstmt.setDouble(8, tratamiento.getCosto());
-            pstmt.setString(9, tratamiento.getObservaciones());
-            pstmt.setInt(10, tratamiento.getId());
+            pstmt.setInt(1, t.getPaciente().getId());
+            pstmt.setInt(2, t.getOdontologo().getId());
+            pstmt.setString(3, t.getNombreTratamiento());
+            pstmt.setString(4, t.getDescripcion());
+            pstmt.setDate(5, new java.sql.Date(t.getFechaInicio().getTime()));
+            pstmt.setDate(6, (t.getFechaFin() != null) ? new java.sql.Date(t.getFechaFin().getTime()) : null);
+            pstmt.setString(7, t.getEstado());
+            pstmt.setBigDecimal(8, t.getCosto());
+            pstmt.setString(9, t.getObservaciones());
+            pstmt.setString(10, t.getDientesAfectados());
+            pstmt.setInt(11, t.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -141,52 +132,10 @@ public class TratamientoOdontologicoDAO {
         String sql = "DELETE FROM tratamientos_odontologicos WHERE id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-    }
-
-    public List<TratamientoOdontologico> findByPacienteId(int pacienteId) {
-        List<TratamientoOdontologico> tratamientos = new ArrayList<>();
-        String sql = "SELECT to.id, to.nombre_tratamiento, to.descripcion, to.fecha_inicio, to.fecha_fin, to.estado, to.costo, to.observaciones, " +
-                     "p.id as paciente_id, o.id as odontologo_id " +
-                     "FROM tratamientos_odontologicos to " +
-                     "JOIN pacientes p ON to.paciente_id = p.id " +
-                     "JOIN odontologos o ON to.odontologo_id = o.id " +
-                     "WHERE to.paciente_id = ? ORDER BY to.fecha_inicio DESC";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, pacienteId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    TratamientoOdontologico tratamiento = new TratamientoOdontologico();
-                    tratamiento.setId(rs.getInt("id"));
-                    tratamiento.setNombreTratamiento(rs.getString("nombre_tratamiento"));
-                    tratamiento.setDescripcion(rs.getString("descripcion"));
-                    tratamiento.setFechaInicio(rs.getDate("fecha_inicio"));
-                    tratamiento.setFechaFin(rs.getDate("fecha_fin"));
-                    tratamiento.setEstado(rs.getString("estado"));
-                    tratamiento.setCosto(rs.getDouble("costo"));
-                    tratamiento.setObservaciones(rs.getString("observaciones"));
-
-                    Paciente paciente = new Paciente();
-                    paciente.setId(rs.getInt("paciente_id"));
-                    tratamiento.setPaciente(paciente);
-
-                    Odontologo odontologo = new Odontologo();
-                    odontologo.setId(rs.getInt("odontologo_id"));
-                    tratamiento.setOdontologo(odontologo);
-
-                    tratamientos.add(tratamiento);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return tratamientos;
     }
 }

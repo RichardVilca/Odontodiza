@@ -12,6 +12,7 @@ com\proyecto\odontodiza\model\Usuario.class
 com\proyecto\odontodiza\controller\HistorialPacienteServlet.class
 com\proyecto\odontodiza\controller\ListPatientsServlet.class
 com\proyecto\odontodiza\dao\CitaDAO.class
+com\proyecto\odontodiza\controller\TratamientoServlet.class
 com\proyecto\odontodiza\model\HorarioDisponible.class
 com\proyecto\odontodiza\dao\UsuarioDAO.class
 com\proyecto\odontodiza\dao\HistorialDentalDAO.class
@@ -25,6 +26,7 @@ com\proyecto\odontodiza\dao\ReporteDAO.class
 com\proyecto\odontodiza\controller\ReservarCitaServlet.class
 com\proyecto\odontodiza\dao\OdontologoDAO.class
 com\proyecto\odontodiza\model\Persona.class
+com\proyecto\odontodiza\controller\ActualizarHistorialServlet.class
 com\proyecto\odontodiza\model\Paciente.class
 com\proyecto\odontodiza\model\Cita.class
 com\proyecto\odontodiza\dao\HorarioDAO.class

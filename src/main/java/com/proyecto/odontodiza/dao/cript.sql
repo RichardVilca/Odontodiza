@@ -92,6 +92,7 @@ CREATE TABLE tratamientos_odontologicos (
     estado VARCHAR(50) DEFAULT 'Pendiente', -- Pendiente, En Progreso, Completado, Cancelado
     costo DECIMAL(10, 2),
     observaciones TEXT,
+    dientes_afectados VARCHAR(255), -- Lista de números de dientes, ej: "11,12,23"
     FOREIGN KEY (paciente_id) REFERENCES pacientes(id),
     FOREIGN KEY (odontologo_id) REFERENCES odontologos(id)
 );
@@ -162,10 +163,10 @@ INSERT INTO citas (paciente_id, horario_id, motivo, estado) VALUES
 (4, 5, 'Empaste dental', 'Programada'); -- Laura Diaz reserva el horario 5
 
 -- Tratamientos Odontológicos
-INSERT INTO tratamientos_odontologicos (paciente_id, odontologo_id, nombre_tratamiento, descripcion, fecha_inicio, fecha_fin, estado, costo, observaciones) VALUES
-(1, 1, 'Limpieza Dental', 'Limpieza profunda y pulido.', '2025-10-20', '2025-10-20', 'Completado', 80.00, 'Paciente con buena higiene.'),
-(2, 1, 'Empaste Molar', 'Empaste de resina en molar superior derecho.', '2025-10-20', NULL, 'En Progreso', 120.00, 'Se requiere una segunda sesión.'),
-(4, 1, 'Extracción de Muela del Juicio', 'Extracción de muela del juicio inferior izquierda.', '2025-10-22', '2025-10-22', 'Completado', 250.00, 'Sin complicaciones post-operatorias.');
+INSERT INTO tratamientos_odontologicos (paciente_id, odontologo_id, nombre_tratamiento, descripcion, fecha_inicio, fecha_fin, estado, costo, observaciones, dientes_afectados) VALUES
+(1, 1, 'Limpieza Dental', 'Limpieza profunda y pulido.', '2025-10-20', '2025-10-20', 'Completado', 80.00, 'Paciente con buena higiene.', NULL),
+(2, 1, 'Empaste Molar', 'Empaste de resina en molar superior derecho.', '2025-10-20', NULL, 'En Progreso', 120.00, 'Se requiere una segunda sesión.', '16'),
+(4, 1, 'Extracción de Muela del Juicio', 'Extracción de muela del juicio inferior izquierda.', '2025-10-22', '2025-10-22', 'Completado', 250.00, 'Sin complicaciones post-operatorias.', '38');
 
 -- Notificaciones (ejemplo)
 INSERT INTO notificaciones (usuario_id, mensaje, leida) VALUES

@@ -1,5 +1,7 @@
 package com.proyecto.odontodiza.controller;
 
+import com.proyecto.odontodiza.dao.OdontologoDAO;
+import com.proyecto.odontodiza.model.Odontologo;
 import com.proyecto.odontodiza.dao.UsuarioDAO;
 import com.proyecto.odontodiza.model.Usuario;
 import com.proyecto.odontodiza.util.PasswordUtil;
@@ -17,10 +19,12 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
 
     private UsuarioDAO usuarioDAO;
+    private OdontologoDAO odontologoDAO;
 
     @Override
     public void init() {
         usuarioDAO = new UsuarioDAO();
+        odontologoDAO = new OdontologoDAO();
     }
 
     @Override
@@ -44,6 +48,8 @@ public class LoginServlet extends HttpServlet {
 
             // Redirigir según el rol
             if ("Odontologo".equalsIgnoreCase(usuario.getRol())) {
+                Odontologo odontologo = odontologoDAO.findByUsuarioId(usuario.getId());
+                session.setAttribute("odontologo", odontologo);
                 response.sendRedirect(request.getContextPath() + "/odontologo"); // Futura página del odontólogo
             }
             else if ("Paciente".equalsIgnoreCase(usuario.getRol())) {
